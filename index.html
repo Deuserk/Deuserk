@@ -3,12 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <title>Painel Almoxarifado</title>
+
 <style>
     body {
         margin: 0;
         font-family: Arial, sans-serif;
         background: #f4f6f8;
     }
+
     header {
         background: #0d47a1;
         color: white;
@@ -17,6 +19,7 @@
         display: flex;
         justify-content: space-between;
     }
+
     .container { padding: 20px; }
 
     .cards {
@@ -25,12 +28,14 @@
         gap: 15px;
         margin-bottom: 20px;
     }
+
     .card {
         padding: 15px;
         border-radius: 8px;
         color: white;
         font-weight: bold;
     }
+
     .blue { background: #1565c0; }
     .orange { background: #ef6c00; }
     .green { background: #2e7d32; }
@@ -43,15 +48,19 @@
         border-radius: 8px;
         overflow: hidden;
     }
+
     th, td {
         padding: 12px;
         border-bottom: 1px solid #eee;
         text-align: left;
     }
+
     th { background: #eeeeee; }
 
     .status-ok { color: green; font-weight: bold; }
     .status-low { color: orange; font-weight: bold; }
+
+    tr { transition: all 0.2s ease; }
 
     .botao-demo {
         width: 35px;
@@ -62,8 +71,13 @@
         cursor: pointer;
         margin-top: 15px;
     }
+
+    .botao-demo:hover {
+        background: #0d47a1;
+    }
 </style>
 </head>
+
 <body>
 
 <header>
@@ -74,10 +88,10 @@
 <div class="container">
 
     <div class="cards">
-        <div class="card blue">Itens em Estoque<br><span id="estoque">325</span></div>
-        <div class="card orange">Baixo Estoque<br><span id="baixo">12</span></div>
-        <div class="card green">Últimas Entradas<br><span id="entradas">8</span></div>
-        <div class="card red">Pedidos Pendentes<br><span id="pedidos">5</span></div>
+        <div class="card blue">Itens em Estoque<br><span id="estoque"></span></div>
+        <div class="card orange">Baixo Estoque<br><span id="baixo"></span></div>
+        <div class="card green">Últimas Entradas<br><span id="entradas"></span></div>
+        <div class="card red">Pedidos Pendentes<br><span id="pedidos"></span></div>
     </div>
 
     <table>
@@ -90,43 +104,7 @@
                 <th>Status</th>
             </tr>
         </thead>
-        <tbody id="tabela">
-            <tr>
-                <td class="codigo"></td>
-                <td class="descricao"></td>
-                <td class="categoria"></td>
-                <td class="qtd"></td>
-                <td class="status"></td>
-            </tr>
-            <tr>
-                <td class="codigo"></td>
-                <td class="descricao"></td>
-                <td class="categoria"></td>
-                <td class="qtd"></td>
-                <td class="status"></td>
-            </tr>
-            <tr>
-                <td class="codigo"></td>
-                <td class="descricao"></td>
-                <td class="categoria"></td>
-                <td class="qtd"></td>
-                <td class="status"></td>
-            </tr>
-            <tr>
-                <td class="codigo"></td>
-                <td class="descricao"></td>
-                <td class="categoria"></td>
-                <td class="qtd"></td>
-                <td class="status"></td>
-            </tr>
-            <tr>
-                <td class="codigo"></td>
-                <td class="descricao"></td>
-                <td class="categoria"></td>
-                <td class="qtd"></td>
-                <td class="status"></td>
-            </tr>
-        </tbody>
+        <tbody id="tabela"></tbody>
     </table>
 
     <button class="botao-demo" onclick="alterarTudo()"></button>
@@ -157,7 +135,6 @@ const itensHotel = [
     { descricao: "Maçã", categoria: "Cozinha" },
     { descricao: "Banana", categoria: "Cozinha" },
     { descricao: "Mamão", categoria: "Cozinha" },
-    { descricao: "Melancia", categoria: "Cozinha" },
     { descricao: "Uva", categoria: "Cozinha" },
 
     { descricao: "Camarão", categoria: "Cozinha" },
@@ -177,31 +154,29 @@ function alterarTudo() {
     document.getElementById("entradas").innerText = Math.floor(Math.random() * 20);
     document.getElementById("pedidos").innerText = Math.floor(Math.random() * 10);
 
-    let linhas = document.querySelectorAll("#tabela tr");
+    const tabela = document.getElementById("tabela");
+    tabela.innerHTML = "";
 
-    // Embaralha e pega itens sem repetir
     let itensMisturados = [...itensHotel].sort(() => Math.random() - 0.5);
 
-    linhas.forEach((linha, i) => {
+    for (let i = 0; i < 10; i++) {
 
         let item = itensMisturados[i];
         let quantidade = Math.floor(Math.random() * 120);
 
-        linha.querySelector(".codigo").innerText = gerarCodigo();
-        linha.querySelector(".descricao").innerText = item.descricao;
-        linha.querySelector(".categoria").innerText = item.categoria;
-        linha.querySelector(".qtd").innerText = quantidade;
+        let statusTexto = quantidade < 20 ? "Baixo Estoque" : "Em Estoque";
+        let statusClasse = quantidade < 20 ? "status-low" : "status-ok";
 
-        let status = linha.querySelector(".status");
-
-        if (quantidade < 20) {
-            status.innerText = "Baixo Estoque";
-            status.className = "status status-low";
-        } else {
-            status.innerText = "Em Estoque";
-            status.className = "status status-ok";
-        }
-    });
+        tabela.innerHTML += `
+            <tr>
+                <td>${gerarCodigo()}</td>
+                <td>${item.descricao}</td>
+                <td>${item.categoria}</td>
+                <td>${quantidade}</td>
+                <td class="${statusClasse}">${statusTexto}</td>
+            </tr>
+        `;
+    }
 }
 
 alterarTudo();
